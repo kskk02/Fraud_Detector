@@ -9,10 +9,14 @@ from flask import render_template,request
 from sqlalchemy import create_engine
 import Fraud_Detection
 from pandas.io import sql
+import pdb
 
 
 app = Flask(__name__)
-
+''' 
+Need the below global variable to do graph computation as a one time analysis and keeping track of the user state without using sessions
+since Flask does not provide session support. 
+'''
 global max_fraudsters_in_DB
 max_fraudsters_in_DB=1
 Fraud_Detection.RunComplete()
@@ -22,6 +26,15 @@ print "initial max_fraudsters_in_DB is " ,max_fraudsters_in_DB
 
 
 def Main_Page():
+
+    """
+    Description: This function inserts the possible possible_fraudsters identified from the graph analysis into the database.
+    INPUT: 
+           df - type: DataFrame - the list of fraudster ID's
+           table  - type: string - the table to be inserted into
+    OUTPUT: No output. Just stores the data in the database
+    """
+
 
     print "initial max_fraudsters_in_DB is " ,max_fraudsters_in_DB
     
@@ -75,6 +88,9 @@ def Main_Page():
         return rv
 
     def _decode_dict(data):
+        ''' 
+        This function decodes the string values to utf-8 to avoid any unicode special characters
+        '''
         rv = {}
         for key, value in data.iteritems():
             if isinstance(key, unicode):
@@ -115,11 +131,12 @@ def Main_Page():
     newdict = dict()
     newdict['links']=  myjson['links']
     newdict['nodes']= myjson['nodes']
+   
 #    newdict = myjson
 
 #    with open('figure.json', 'w') as outfile:
 #        json.dump(newdict, outfile)
-    return render_template('force.html', data=newdict, Fraudster_index = possible_fraudsters_index, Fraudster_ID= Fraudster_ID )
+    return render_template('force.html', data=newdict, Fraudster_index = possible_fraudsters_index, Fraudster_ID = Fraudster_ID )
 
 
 if __name__ == '__main__':
