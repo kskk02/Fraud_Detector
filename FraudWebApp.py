@@ -7,7 +7,7 @@ import json
 from flask import Flask
 from flask import render_template,request
 from sqlalchemy import create_engine
-import Fraud_Detection
+#import Fraud_Detection
 from pandas.io import sql
 import pdb
 
@@ -19,7 +19,7 @@ since Flask does not provide session support.
 '''
 global max_fraudsters_in_DB
 max_fraudsters_in_DB=1
-Fraud_Detection.RunComplete()
+#Fraud_Detection.RunComplete()
 TotalGraph = nx.read_edgelist("edgelist.csv",delimiter=',')
 print "initial max_fraudsters_in_DB is " ,max_fraudsters_in_DB
 @app.route('/',methods=['GET','POST'])
@@ -62,7 +62,7 @@ def Main_Page():
 
             pass
         elif request.form['submit'] == 'Run Complete Detection':
-            Fraud_Detection.RunComplete()
+ #           Fraud_Detection.RunComplete()
             possible_fraudsters_index =0
         else:
             pass # unknown
@@ -88,9 +88,6 @@ def Main_Page():
         return rv
 
     def _decode_dict(data):
-        ''' 
-        This function decodes the string values to utf-8 to avoid any unicode special characters
-        '''
         rv = {}
         for key, value in data.iteritems():
             if isinstance(key, unicode):

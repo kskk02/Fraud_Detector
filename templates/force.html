@@ -1,0 +1,262 @@
+<!doctype html>
+
+<head>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<style type="text/css">
+
+
+#chart {
+  width: 920;
+  font-family: 'Asap' sans-serif;
+  height: 965;
+}
+
+.node {
+  stroke: magenta;
+  fill: blue;
+}
+
+
+.link {
+  stroke: black;
+  stroke-width: 1px;
+}
+
+#forceLayout {
+}
+
+
+
+
+.cursor {
+  fill: none;
+  stroke: brown;
+  pointer-events: none;
+}
+
+.button {
+   border-top: 1px solid #96d1f8;
+   background: #65a9d7;
+   background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
+   background: -webkit-linear-gradient(top, #3e779d, #65a9d7);
+   background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+   background: -ms-linear-gradient(top, #3e779d, #65a9d7);
+   background: -o-linear-gradient(top, #3e779d, #65a9d7);
+   padding: 11.5px 23px;
+   -webkit-border-radius: 26px;
+   -moz-border-radius: 26px;
+   border-radius: 26px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 23px;
+   font-family: Georgia, serif;
+   text-decoration: none;
+   vertical-align: middle;
+   }
+.button:hover {
+   border-top-color: #28597a;
+   background: #28597a;
+   color: #ccc;
+   }
+.button:active {
+   border-top-color: #1b435e;
+   background: #1b435e;
+   }
+
+.charts {
+  width: 500px;
+
+}
+.charts h3 {
+  text-align: center;
+  font-size: 23px;
+}
+
+</style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://dimplejs.org/dist/dimple.v2.1.0.min.js"></script>
+
+</head>
+
+
+<body>
+
+
+<div id="header" style="background-color:#FFA500;">
+  <h1 style="margin-bottom:0;">
+      <center> <form method="post" action="/">
+      <input type="submit" class="button" name="submit" value="Confirm Fraudster Anomaly">
+      <input type="submit" class="button" name="submit" value="Not Anomaly and Skip to Next">
+      <input type="submit" class="button" name="submit" value="Run Complete Detection"> 
+      <input type="hidden" class="button" name="fraud_index" value = {{Fraudster_index}} >
+      <form> </center>
+</div>
+
+<div id="graph" style="background-color:#FFFFFF;width:65%;height:800px;float:left;">
+</div>
+
+<div id="content" style="background-color:#EEEEEE; width:30%; float:right;">
+<!--   <img src = "../static/NumOfUniqueCallees.png" style= 'width:100%'> </img> 
+ -->  
+ <div id="uniqueCallees" class="charts"></div>
+ <div id="uniqueCallers" class="charts"></div>
+ <div id="callduration" class="charts"></div>
+  <!-- <div id="anomalies" class="charts"></div> -->
+<!--   <img src = "../static/NumOfUniqueCallers.png" style= 'width:100%'> </img> 
+ --> 
+   <img src = "../static/PCA_Analysis.png" style= 'width:100%'> </img>
+  <!-- <img src = "../static/ROC.png" style= 'width:100%'> </img>  -->
+</div>
+
+
+<script type="text/javascript">
+
+  
+
+    d3.csv("../static/Num_Of_Unique_Callees.csv", function (data) {
+      d3.select('#uniqueCallees').append("h3").text("Num of Unique Callees per Phone Number");
+      var uniqueCallees = dimple.newSvg("#uniqueCallees", 500, 450);
+
+      var myChart = new dimple.chart(uniqueCallees, data);
+      //myChart.setBounds(60, 30, 510, 305)
+      var x = myChart.addCategoryAxis("x", "callgno");
+      //x.hidden = true;
+      //x.title = "Unique Callers";
+      myChart.addMeasureAxis("y", "Num of Callees");
+      var s = myChart.addSeries(null, dimple.plot.bar);
+      s.barGap = 0.55;
+      x.title = "Unique Callers";
+      myChart.draw();
+      d3.select('#uniqueCallees').selectAll('.tick').select('text').remove()
+    });
+
+
+
+   d3.csv("../static/Num_Of_Unique_Callers.csv", function (data) {
+      d3.select('#uniqueCallers').append("h3").text("Num of Unique Callers per Phone Number");
+      var uniqueCallers = dimple.newSvg("#uniqueCallers", 500, 450);
+
+      var myChart = new dimple.chart(uniqueCallers, data);
+      //myChart.setBounds(60, 30, 510, 305)
+      var x = myChart.addCategoryAxis("x", "calldno");
+      //x.hidden = true;
+      x.title = "Unique Callers";
+      myChart.addMeasureAxis("y", "Num of Callers");
+      var s = myChart.addSeries(null, dimple.plot.bar);
+      s.barGap = 0.55;
+      x.title = "Unique Callers";
+      myChart.draw();
+      d3.select('#uniqueCallers').selectAll('.tick').select('text').remove()
+    });
+
+
+   d3.csv("../static/call_duration.csv", function (data) {
+      d3.select('#callduration').append("h3").text("Cumulative Call Duration per Phone Number");
+      var callduration = dimple.newSvg("#callduration", 500, 450);
+
+      var myChart = new dimple.chart(callduration, data);
+      //myChart.setBounds(60, 30, 510, 305)
+      var x = myChart.addCategoryAxis("x", "calldno");
+      //x.hidden = true;
+      x.title = "Unique Callers";
+      myChart.addMeasureAxis("y", "Cumulative Call Duration");
+      var s = myChart.addSeries(null, dimple.plot.bar);
+      s.barGap = 0.55;
+      x.title = "Unique Callers";
+      myChart.draw();
+      d3.select('#uniqueCallers').selectAll('.tick').select('text').remove()
+    });
+
+
+
+
+  // var scatter = dimple.newSvg("#anomalies", 490, 350);
+  //     d3.csv("../static/PCA_Results.csv", function (data) {
+  //       var myChart = new dimple.chart(scatter, data);
+  //       myChart.setBounds(60, 30, 510, 305);
+  //       var x = myChart.addCategoryAxis("x", "Index");
+  //       myChart.addMeasureAxis("y", "PCA Dimension");
+  //       var s = myChart.addSeries("anomalies", dimple.plot.bubble);
+  //       myChart.draw();
+  //     });
+
+  var graph = {{ data|safe }};
+  var Fraudster_ID = {{ Fraudster_ID }};
+  var Fraudster_index = {{Fraudster_index}};
+  var graph_dom = d3.select('#graph');
+  var width = parseInt(graph_dom.style('width'));
+  var height = parseInt(graph_dom.style('height'));
+
+  var color = d3.scale.category20();
+
+  var force = d3.layout.force()
+      .charge(-120)
+      .linkDistance(30)
+      .size([width, height]);
+
+  var svg = d3.select("#graph").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    force
+        .nodes(graph.nodes)
+        .links(graph.links)
+        .start();
+
+    var link = svg.selectAll(".link")
+        .data(graph.links)
+      .enter().append("line")
+        .attr("class", "link")
+        .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+    var node = svg.selectAll(".node")
+        .data(graph.nodes)
+      .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", 5)
+        .style("fill", function(d) { return d.id === Fraudster_ID.toString() ? 'red' : 'blue'; })
+        .on('mouseover', function(d) {
+            var xPosition = parseFloat(d3.select(this).attr("x"));
+            var yPosition = parseFloat(d3.select(this).attr("y")) + 10;
+
+            svg.append("text")
+              .attr("id", "tooltip")
+              .attr("x", xPosition)
+              .attr("y", yPosition)
+              .attr("text-anchor", "middle")
+              .attr("font-family", "sans-serif")
+              .attr("font-size", "11px")
+              .attr("font-weight", "bold")
+              .attr("fill", "black")
+              .text(d);
+        })
+        .call(force.drag);
+
+    node.append("title")
+        .text(function(d) { return d.name; });
+
+    force.on("tick", function() {
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+      node.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+
+
+   // });
+  //$(document).ready(function(){
+   // $("circle.node").click(function(){
+     // var obj = $(this)[0]['__data__']
+    //  console.log($(this))
+    //})
+  });
+
+</script>
+  </body>
+</html>
