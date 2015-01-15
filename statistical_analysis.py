@@ -1,3 +1,4 @@
+
 ''' This component performs the statistical analysis and generates a list of anomalous phone numbers per a statistical treatment.
 In this case the statistical anomaly detection approach is to identify phone numbers that have an above mean level of callers, callees
 and cumulative call duration. '''	
